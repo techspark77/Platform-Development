@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?><unload unload_date="2021-09-02 17:12:50">
+<sys_remote_update_set action="INSERT_OR_UPDATE">
+<application display_value="Global">global</application>
+<application_name>Global</application_name>
+<application_scope>global</application_scope>
+<application_version/>
+<collisions/>
+<commit_date/>
+<deleted/>
+<description>THis update set contains session timeout dialogue box feature. </description>
+<inserted/>
+<name>Platform | Session Timeout PopUp</name>
+<origin_sys_id/>
+<parent display_value=""/>
+<release_date/>
+<remote_base_update_set display_value=""/>
+<remote_parent_id/>
+<remote_sys_id>a921a82687d230101d03fea9cebb35a9</remote_sys_id>
+<state>loaded</state>
+<summary/>
+<sys_class_name>sys_remote_update_set</sys_class_name>
+<sys_created_by>niamul.arifin</sys_created_by>
+<sys_created_on>2021-09-02 17:12:50</sys_created_on>
+<sys_id>f80860ee87d230101d03fea9cebb3505</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>niamul.arifin</sys_updated_by>
+<sys_updated_on>2021-09-02 17:12:50</sys_updated_on>
+<update_set display_value=""/>
+<update_source display_value=""/>
+<updated/>
+</sys_remote_update_set>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_ui_page_bff1ac6687d230101d03fea9cebb35f1</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ui_page"&gt;&lt;sys_ui_page action="INSERT_OR_UPDATE"&gt;&lt;category&gt;general&lt;/category&gt;&lt;client_script&gt;&lt;![CDATA[addLoadEvent(init);
+
+var _modal = {
+    "startDT": null,
+    "duration": 90,
+    "endDT": null,
+    "timePassed": 0,
+    "timeRemaining": 0,
+    "perPassed": 0,
+    "progressBar": null,
+    "progressMsg": null
+};
+
+function init() {
+    //defaults
+    _modal.startDT = new Date();
+    _modal.endDT = new Date(_modal.startDT);
+    _modal.endDT.setSeconds(_modal.endDT.getSeconds() + _modal.duration);
+
+    _modal.progressBar = document.getElementById("progressBar");
+    _modal.progressMsg = document.getElementById("progressMsg");
+
+    //override defaults
+    var expireAt = document.getElementById("expireAt");
+    _modal.endDT = (expireAt.value != null) ? new Date(expireAt.value) : _modal.endDT;
+    var duration = document.getElementById("duration");
+    _modal.duration = (duration.value != null) ? parseInt(duration.value) : _modal.duration;
+
+    //console.log("_modal = " + JSON.stringify(_modal, null, 4));
+
+    _GlobalModalInterval = window.setInterval(main, 1000);
+}
+
+function main() {
+    try {
+        //console.log("doc.title = " + window.parent.document.title);
+        var current = new Date();
+
+        //_modal.timePassed = (current - _modal.startDT)/1000;
+
+        _modal.timeRemaining = ((_modal.endDT - current) / 1000).toFixed(0);
+        if (_modal.timeRemaining &lt;= 0) {
+            _modal.timeRemaining = 0;
+            window.parent.document.title = "Session timed out";
+            _modal.progressMsg.innerHTML = "Session timed out";
+            document.getElementById("timedOut").style.display = 'block';
+            document.getElementById("bar").style.display = 'none';
+        } else {
+            window.parent.document.title = (_modal.timeRemaining) + " sec until timeout";
+            _modal.progressMsg.innerHTML = ("Your session will expire in " + _modal.timeRemaining + " second(s)");
+        }
+
+        _modal.perPassed = (100 - ((_modal.timeRemaining / _modal.duration) * 100)).toFixed(0);
+        _modal.perPassed = (_modal.perPassed &gt; 100) ? 100 : _modal.perPassed;
+
+        if (_modal.progressBar.style != null) {
+            _modal.progressBar.style.width = _modal.perPassed + '%';
+        }
+        //_modal.progressBar.innerHTML = _modal.perPassed + "% ";
+
+
+    } catch (ex) {
+        console.log(ex.message);
+    } finally {
+        if (_modal.timeRemaining == 0) {
+            clearInterval(_GlobalModalInterval);
+
+        }
+    }
+}]]&gt;&lt;/client_script&gt;&lt;description&gt;This Modal dialogue for the session timeout warning on the platform&lt;/description&gt;&lt;direct&gt;false&lt;/direct&gt;&lt;endpoint/&gt;&lt;html&gt;&lt;![CDATA[&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+&lt;j:jelly trim="false" xmlns:j="jelly:core" xmlns:g="glide" xmlns:j2="null" xmlns:g2="null"&gt;
+&lt;g:ui_form&gt;
+  &lt;!-- Get the values from dialog preferences --&gt;
+  &lt;g:evaluate var="jvar_expireAt"
+    expression="RP.getWindowProperties().get('expireAt')" /&gt;
+  &lt;input type="hidden" id='expireAt' value="${jvar_expireAt}" /&gt;
+  &lt;g:evaluate var="jvar_duration"
+    expression="RP.getWindowProperties().get('duration')" /&gt;
+  &lt;input type="hidden" id='duration' value="${jvar_duration}" /&gt;
+
+	&lt;!-- Set up form fields and labels --&gt;
+	&lt;div style="margin:0; padding:10px; border:10px solid black"&gt;
+	&lt;div id="bar" width="100%" &gt;
+	    &lt;div class="progress" style="height:24px"&gt;
+            &lt;div id="progressBar" class="progress-bar progress-bar-danger progress-bar-striped" role="progressbar"  aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width:0%" &gt;
+				
+			&lt;/div&gt;
+		&lt;/div&gt;
+	&lt;/div&gt;		
+	&lt;div class=" h4 text-center text-danger"&gt;
+		&lt;span id="progressMsg"&gt;&lt;/span&gt;
+	&lt;/div&gt;	
+
+     &lt;div id="timedOut" class="text-center" style="display:none"&gt;
+			&lt;a class="btn btn-danger" href=""&gt;Return to Application&amp;#160;&amp;#160;&gt;&lt;/a&gt;
+	 &lt;/div&gt;  
+	 &lt;/div&gt;
+&lt;/g:ui_form&gt;
+&lt;/j:jelly&gt;]]&gt;&lt;/html&gt;&lt;name&gt;session_warning_modal&lt;/name&gt;&lt;processing_script/&gt;&lt;sys_class_name&gt;sys_ui_page&lt;/sys_class_name&gt;&lt;sys_created_by&gt;niamul.arifin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2021-09-02 16:49:23&lt;/sys_created_on&gt;&lt;sys_id&gt;bff1ac6687d230101d03fea9cebb35f1&lt;/sys_id&gt;&lt;sys_mod_count&gt;2&lt;/sys_mod_count&gt;&lt;sys_name&gt;session_warning_modal&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_page_bff1ac6687d230101d03fea9cebb35f1&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;niamul.arifin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2021-09-02 16:55:46&lt;/sys_updated_on&gt;&lt;/sys_ui_page&gt;&lt;/record_update&gt;</payload>
+<payload_hash>-1850039370</payload_hash>
+<remote_update_set display_value="Platform | Session Timeout PopUp">f80860ee87d230101d03fea9cebb3505</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>niamul.arifin</sys_created_by>
+<sys_created_on>2021-09-02 17:12:50</sys_created_on>
+<sys_id>340860ee87d230101d03fea9cebb3506</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>17ba77019360000001</sys_recorded_at>
+<sys_updated_by>niamul.arifin</sys_updated_by>
+<sys_updated_on>2021-09-02 17:12:50</sys_updated_on>
+<table/>
+<target_name>session_warning_modal</target_name>
+<type>UI Page</type>
+<update_domain>global</update_domain>
+<update_guid>8b142c2a70d2301036f166094ee5e3f0</update_guid>
+<update_guid_history>8b142c2a70d2301036f166094ee5e3f0:-1850039370,17d2a0e6a0d230106374175405d67de1:89097450,1da22c2690d230102e2a185e084a666c:-1763216857</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_script_include_2141ac2687d230101d03fea9cebb3507</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_script_include"&gt;&lt;sys_script_include action="INSERT_OR_UPDATE"&gt;&lt;access&gt;package_private&lt;/access&gt;&lt;active&gt;true&lt;/active&gt;&lt;api_name&gt;global.session_heartbeat&lt;/api_name&gt;&lt;caller_access/&gt;&lt;client_callable&gt;true&lt;/client_callable&gt;&lt;description&gt;session_heartbeat script include this provides a activity ping to keep a session alive while a user is active in the browser.&lt;/description&gt;&lt;name&gt;session_heartbeat&lt;/name&gt;&lt;script&gt;&lt;![CDATA[var session_heartbeat = Class.create();
+session_heartbeat.prototype = Object.extendsObject(AbstractAjaxProcessor, {
+
+    pacemaker: function() {
+        var response = {
+            'dtHeartbeat': null,
+            'secDigest': 10,
+            "secHeartbeat": 60,
+            "secWarningDuration": 120,
+            "minSessionTimeout": 3,
+            "sessionID": "",
+            "beat": ""
+        };
+
+        response.sessionID = gs.getSessionID();
+
+        //the datetime value passed in, send it back
+        var hb = this.getParameter('sysparm_heartbeat');
+        if (!JSUtil.nil(hb)) {
+            response.dtHeartbeat = hb;
+        }
+
+        //positioning to perform specific action for keep alive when beat is true
+        var beat = this.getParameter('sysparm_beat');
+        if (!JSUtil.nil(beat)) {
+            response.beat = beat;
+        }
+
+        //use system properties to send override UI Script
+        var to = gs.getProperty('glide.ui.session_timeout');
+        if (!JSUtil.nil(to)) {
+            response.minSessionTimeout = to;
+        }
+
+        //TESTING  --  THIS DOES NOT WORK
+        //Found updateing a record would refresh a session in personal dev space but is not working in corporate environment
+        /*
+        var gr1 = new GlideRecord('sys_user_session');
+        if (gr1.get('ID', response.sessionID)){
+        	response.sessionID += ' : Found';
+        	gr1.last_accessed = response.dtHeartbeat;
+        	gr1.update(); //update record to keep session alive
+        }
+        else {
+        	response.sessionID += ' : Not Found';
+        }
+        */
+
+        var json = new JSON();
+        return json.encode(response);
+    },
+
+    type: 'session_heartbeat'
+});]]&gt;&lt;/script&gt;&lt;sys_class_name&gt;sys_script_include&lt;/sys_class_name&gt;&lt;sys_created_by&gt;niamul.arifin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2021-09-02 16:45:57&lt;/sys_created_on&gt;&lt;sys_id&gt;2141ac2687d230101d03fea9cebb3507&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;session_heartbeat&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_script_include_2141ac2687d230101d03fea9cebb3507&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;niamul.arifin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2021-09-02 17:01:02&lt;/sys_updated_on&gt;&lt;/sys_script_include&gt;&lt;/record_update&gt;</payload>
+<payload_hash>1453742797</payload_hash>
+<remote_update_set display_value="Platform | Session Timeout PopUp">f80860ee87d230101d03fea9cebb3505</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>niamul.arifin</sys_created_by>
+<sys_created_on>2021-09-02 17:12:50</sys_created_on>
+<sys_id>700860ee87d230101d03fea9cebb3506</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>17ba774eb5d0000001</sys_recorded_at>
+<sys_updated_by>niamul.arifin</sys_updated_by>
+<sys_updated_on>2021-09-02 17:12:50</sys_updated_on>
+<table/>
+<target_name>session_heartbeat</target_name>
+<type>Script Include</type>
+<update_domain>global</update_domain>
+<update_guid>585564aa0cd23010c736fdbd6da73a6c</update_guid>
+<update_guid_history>585564aa0cd23010c736fdbd6da73a6c:1453742797,07d1e866a2d23010cc0e679489764246:-1914620698</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_properties_348a7b00c9e7101091f9f064648327ca</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties"><sys_properties action="INSERT_OR_UPDATE"><choices/><description>Sets the session timeout, in minutes. Values exceeding 1440 minutes will be treated as one day.</description><ignore_cache>false</ignore_cache><is_private>false</is_private><name>glide.ui.session_timeout</name><read_roles/><suffix/><sys_class_name>sys_properties</sys_class_name><sys_created_by>system</sys_created_by><sys_created_on>2020-09-25 01:03:52</sys_created_on><sys_id>348a7b00c9e7101091f9f064648327ca</sys_id><sys_mod_count>3</sys_mod_count><sys_name>glide.ui.session_timeout</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_properties_348a7b00c9e7101091f9f064648327ca</sys_update_name><sys_updated_by>niamul.arifin</sys_updated_by><sys_updated_on>2021-09-02 17:01:37</sys_updated_on><type>integer</type><value>3</value><write_roles/></sys_properties><sys_translated_text action="delete_multiple" query="documentkey=348a7b00c9e7101091f9f064648327ca"/></record_update>]]></payload>
+<payload_hash>-934055131</payload_hash>
+<remote_update_set display_value="Platform | Session Timeout PopUp">f80860ee87d230101d03fea9cebb3505</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>niamul.arifin</sys_created_by>
+<sys_created_on>2021-09-02 17:12:50</sys_created_on>
+<sys_id>bc0860ee87d230101d03fea9cebb3505</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>17ba7757c210000001</sys_recorded_at>
+<sys_updated_by>niamul.arifin</sys_updated_by>
+<sys_updated_on>2021-09-02 17:12:50</sys_updated_on>
+<table/>
+<target_name>glide.ui.session_timeout</target_name>
+<type>System Property</type>
+<update_domain>global</update_domain>
+<update_guid>9575e4aaa7d230104b870b75a35d8df7</update_guid>
+<update_guid_history>9575e4aaa7d230104b870b75a35d8df7:-934055131,4005a4aab6d23010ef105026c989c16d:-974729881,34a0982e365230105736eb0c7da6b0aa:796870510,50a0982e13523010f33e8a48e04cd2a2:-1094505365</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_ui_script_3d432ce687d230101d03fea9cebb35d4</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ui_script"&gt;&lt;sys_ui_script action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;description&gt;Session timer warning the user before timeout occurs and keeping server heartbeat when active in browser.&lt;/description&gt;&lt;global&gt;true&lt;/global&gt;&lt;name&gt;sessionTimer&lt;/name&gt;&lt;script&gt;&lt;![CDATA[//the modal variable must be exposed in order to kill the modal timer if activity is resumed durring warning
+var _GlobalModalInterval = null;
+
+//use a javascript IIFE to protect window events from being destroyed with GlideDialogWindow destroy
+(function() {
+    //when page is loaded initialize
+    addLoadEvent(init);
+
+    /*Settings as JSON object contain values to be configured
+    secHeartbeat in seconds configures client activity check with heartbeat if user is active
+    secWarningDuration in Seconds configures with how much time remaining should a warning dialog appear
+    minSessionTimeout is Minutes configures when to kill the session (I prefer this to be within the margin of error for the server timeout) */
+    var settings = {
+        'secDigest': 10,
+        "secHeartbeat": 60,
+        "secWarningDuration": 120,
+        "minSessionTimeout": 30,
+        'dialogTitle': ' ',
+        'loginPage': 'login.do',
+        'hbRetries': 2
+    };
+    var objDialog = null; //do not put in globals to to logging issue
+    // globals in JSON to reduce exposure
+    var globals = {
+        'now': new Date(),
+        'lastClientAction': new Date(),
+        'lastHeartbeat': new Date(),
+        'nextHeartbeat': new Date(),
+        'warnAt': null,
+        'expireAt': null,
+        'objTimer': null,
+        'originalTitle': ''
+    };
+
+
+    //initialize actions (setup timed loop to main)
+    function init() {
+        //console.log("doc.url = " + window.parent.document.URL);
+        if ((window.name !== 'gsft_main') || (window.parent.document.URL.indexOf(settings.loginPage) &gt; -1)) {
+            console.log("Prevent timer in this window or on this page.");
+            return;
+        }
+
+        globals.objTimer = window.setInterval(main, settings.secDigest * 1000);
+        main();
+        if ((typeof Notification !== 'undefined') &amp;&amp; (Notification.permission !== "granted")) {
+            Notification.requestPermission();
+        }
+    }
+
+    /*main is looped on secDigest and checks for:
+    Heartbeat should be performed
+    Warning dialog opened
+    Session Expired	*/
+    function main() {
+        //console.log("Session Timer: main");
+
+        globals.now = new Date();
+        calcEnds();
+
+        if (globals.expireAt.getTime() &lt; globals.now.getTime()) {
+            //check for session expired
+            //SN uses a shared session between browser tabs.  Forcing logoff will end this session.
+            //window.location = "logout.do";
+            console.log('Session Expired!');
+            shutdown();
+        } else if (globals.warnAt.getTime() &lt; globals.now.getTime()) {
+            //check if modal should be open on each digest
+            if (objDialog == null) {
+                //if modal isn't open, open it
+                openWarningModal();
+                if ((typeof Notification !== 'undefined') &amp;&amp; (Notification.permission === "granted")) {
+                    notify('    A browser tab is\r\n        about to expire...', 10);
+                }
+            }
+            //heartbeat on digest during modal to check if other tabs are active
+            //heartbeat(globals.lastClientAction.getTime() &gt; globals.lastHeartbeat.getTime());
+        } else if (globals.now.getTime() &gt;= globals.nextHeartbeat.getTime()) {
+            //heartbeat duration elapsed, perform heartbeat
+            heartbeat(globals.lastClientAction.getTime() &gt; globals.lastHeartbeat.getTime());
+        } else {
+            //digest between heartbeats
+            //notify('    Hello\r\n        world...',5);
+        }
+    }
+
+    function openWarningModal() {
+        globals.originalTitle = window.parent.document.title;
+        //Set the dialog title
+        //Instantiate the dialog
+        objDialog = new GlideDialogWindow("session_warning_modal");
+        objDialog.setTitle(settings.dialogTitle);
+        objDialog.removeCloseDecoration();
+        objDialog.setPreference("expireAt", globals.expireAt);
+        objDialog.setPreference("duration", settings.secWarningDuration);
+        objDialog.setSize('400', '135');
+        objDialog.render(); //Open the dialog
+    }
+
+    function notify(msg, secDuration) {
+        var options = {
+            'body': msg,
+            'icon': '/favicon.ico'
+        };
+        var notification = new Notification('Session Timer Notification', options);
+        notification.onclick = function() {
+            window.focus();
+        };
+        setTimeout(function() {
+            notification.close();
+        }, secDuration * 1000);
+    }
+
+    // Performs basic glideAjax call to server
+    // blnBeat true if Client activity since last heartbeat to refresh session.
+    // blnBeat false do not refresh timer but check if other tabs are active
+    function heartbeat(blnBeat) {
+        var sendDT = new Date();
+        var ga = new GlideAjax('session_heartbeat');
+        ga.addParam("sysparm_name", "pacemaker");
+        ga.addParam("sysparm_heartbeat", new Date());
+        ga.addParam("sysparm_beat", blnBeat);
+        //console.log("Session Timer: heartbeat");
+        ga.getXML(onAjaxReturn);
+
+    }
+    // glideAjax respose
+    function onAjaxReturn(result) {
+        var strResponse = result.responseXML.documentElement.getAttribute("answer");
+        if (strResponse == null) {
+            if (globals.intRetry &lt; settings.hbRetries) {
+                globals.intRetry += 1;
+                return;
+            } else {
+                shutdown();
+                alert('Your session ended prematurely.  Please re-establish your connection to continue.');
+                return;
+            }
+        }
+
+        var response = JSON.parse(strResponse);
+        globals.lastHeartbeat = new Date(response.dtHeartbeat);
+        globals.nextHeartbeat = new Date(globals.lastHeartbeat.getTime() + (settings.secHeartbeat * 1000));
+
+        //Override client defined interval if response provides different values (Allows for system properties to setup script)
+        if (response.minSessionTimeout != null &amp;&amp; response.minSessionTimeout != settings.minSessionTimeout) {
+            settings.minSessionTimeout = response.minSessionTimeout;
+            calcEnds();
+        }
+        if (response.secWarningDuration != null &amp;&amp; response.secWarningDuration != settings.secWarningDuration) {
+            settings.secWarningDuration = response.secWarningDuration;
+            calcEnds();
+        }
+        if (response.secHeartbeat != null &amp;&amp; response.secHeartbeat != settings.secHeartbeat) {
+            settings.secHeartbeat = response.secHeartbeat;
+        }
+        if (response.secDigest != null &amp;&amp; response.secDigest != settings.secDigest) {
+            settings.secDigest = response.secDigest;
+            clearInterval(globals.objTimer);
+            globals.objTimer = window.setInterval(main, settings.secDigest * 1000);
+        }
+        globals.intRetry = 0;
+        var echo = {
+            'heartbeatResponse': response,
+            'settings': settings,
+            'globals': globals
+        };
+        console.log('SessionTimer = ' + JSON.stringify(echo, null, 4));
+
+    }
+
+    function calcEnds() {
+        globals.expireAt = new Date(globals.lastClientAction.getTime() + (settings.minSessionTimeout * 60000));
+        globals.warnAt = new Date(globals.expireAt.getTime() - (settings.secWarningDuration * 1000));
+    }
+
+    function shutdown() {
+        clearInterval(globals.objTimer);
+        window.onmousemove = null;
+        window.onclick = null;
+        window.onkeypress = null;
+
+    }
+
+    //refresh last user input datetime, if dialog is open when user becomes active close dialog and perform heartbeat
+    function clientAction() {
+        //console.log("Session Timer: clientAction");
+        globals.lastClientAction = new Date();
+        if (globals.expireAt != null &amp;&amp; globals.expireAt.getTime() &lt; globals.lastClientAction.getTime()) {
+            //expired, shut it down
+            shutdown();
+        } else if (objDialog != null) {
+            //if warning dialog is open, close it and refresh session
+            window.parent.document.title = globals.originalTitle;
+            clearInterval(_GlobalModalInterval);
+            objDialog.destroy();
+            objDialog = null;
+            heartbeat(true);
+        }
+    }
+
+    //monitor browser input events to to indicate user is active
+    window.onmousemove = clientAction;
+    window.onclick = clientAction;
+    window.onkeypress = clientAction;
+
+}());]]&gt;&lt;/script&gt;&lt;script_name/&gt;&lt;sys_class_name&gt;sys_ui_script&lt;/sys_class_name&gt;&lt;sys_created_by&gt;niamul.arifin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2021-09-02 16:54:30&lt;/sys_created_on&gt;&lt;sys_id&gt;3d432ce687d230101d03fea9cebb35d4&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;sessionTimer&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ui_script_3d432ce687d230101d03fea9cebb35d4&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;niamul.arifin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2021-09-02 16:57:08&lt;/sys_updated_on&gt;&lt;ui_type&gt;0&lt;/ui_type&gt;&lt;use_scoped_format&gt;false&lt;/use_scoped_format&gt;&lt;/sys_ui_script&gt;&lt;/record_update&gt;</payload>
+<payload_hash>-1331919901</payload_hash>
+<remote_update_set display_value="Platform | Session Timeout PopUp">f80860ee87d230101d03fea9cebb3505</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>niamul.arifin</sys_created_by>
+<sys_created_on>2021-09-02 17:12:50</sys_created_on>
+<sys_id>f40860ee87d230101d03fea9cebb3506</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>17ba77157160000001</sys_recorded_at>
+<sys_updated_by>niamul.arifin</sys_updated_by>
+<sys_updated_on>2021-09-02 17:12:50</sys_updated_on>
+<table/>
+<target_name>sessionTimer</target_name>
+<type>UI Script</type>
+<update_domain>global</update_domain>
+<update_guid>4364a8e68fd230106ffd7c812dafb3ae</update_guid>
+<update_guid_history>4364a8e68fd230106ffd7c812dafb3ae:-1331919901,20d3682618d230104e597dd0350fa9d0:-1706494097</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+</unload>
